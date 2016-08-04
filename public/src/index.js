@@ -83,14 +83,28 @@ window.onload = function() {
       var minFrequency = 20,
           maxFrequency = 2000;
 
-      return ((mouseXPosition / 140) * maxFrequency) + minFrequency;
+      // hack
+      mouseXPosition -= 80;
+      if (mouseXPosition < 0) { mouseXPosition = 0; }
+      if (mouseXPosition > 470) { mouseXPosition = 470; }
+
+      var frequency = ((mouseXPosition / 470) * maxFrequency) + minFrequency;
+      console.log('=========', frequency);
+      return frequency;
   };
 
   function calculateGain (mouseYPosition) {
       var minGain = 0,
           maxGain = 1;
 
-      return 1 - ((mouseYPosition / 100) * maxGain) + minGain;
+      // hack
+      mouseYPosition -= 60
+      if (mouseYPosition < 0) { mouseYPosition = 0; }
+      if (mouseYPosition > 360) { mouseYPosition = 360; }
+
+      var gain = 1 - ((mouseYPosition / 360) * maxGain) + minGain;
+      console.log('>>>>>>>>>>', gain);
+      return gain;
   };
 
   function createOscillator (e) {

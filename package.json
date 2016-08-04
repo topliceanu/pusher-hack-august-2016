@@ -1,0 +1,15 @@
+{
+  "name": "pusher-hack-august-2016",
+  "version": "1.0.0",
+  "description": "html5 theremin",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "./node_modules/.bin/http-server ./public -p 3000 -a 0.0.0.0 --cors --utc --ssl --cert ./ssl/cert.pem --key ./ssl/key.pem"
+  },
+  "author": "alexandru topliceanu",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^0.9.0"
+  }
+}

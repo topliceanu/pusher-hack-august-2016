@@ -1,9 +1,9 @@
 window.onload = function() {
-  var smoother = new Smoother([0.9995, 0.9995], [0, 0], 0);
   var canvas = document.getElementById('canvas');
   var context = canvas.getContext('2d');
   var video = document.createElement('video');
   var detector;
+  var audio = new AudioContext();
 
   window.navigator.webkitGetUserMedia({video: true}, function(stream) {
     try {
@@ -60,7 +60,55 @@ window.onload = function() {
         coord[3] *= video.videoHeight / detector.canvas.height;
 
         highlight(context, coord)
+
+        changeFrequency({
+          clientX: coord[0] + coord[2] / 2,
+          clientY: coord[1] + coord[3] / 2
+        });
       }
     }
   }
+
+  // Theremin part
+
+  var audio = new AudioContext(),
+      gainNode = audio.createGain(),
+      oscillator = null;
+
+  gainNode.connect(audio.destination);
+  createOscillator({clientX: 70, clientY: 50})
+
+
+  function calculateFrequency (mouseXPosition) {
+      var minFrequency = 20,
+          maxFrequency = 2000;
+
+      return ((mouseXPosition / 140) * maxFrequency) + minFrequency;
+  };
+
+  function calculateGain (mouseYPosition) {
+      var minGain = 0,
+          maxGain = 1;
+
+      return 1 - ((mouseYPosition / 100) * maxGain) + minGain;
+  };
+
+  function createOscillator (e) {
+    var xPos = e.clientX;
+    var yPos = e.clientY;
+
+    oscillator = audio.createOscillator();
+    oscillator.frequency.setTargetAtTime(calculateFrequency(xPos), audio.currentTime, 0.001);
+    gainNode.gain.setTargetAtTime(calculateGain(yPos), audio.currentTime, 0.001);
+    oscillator.connect(gainNode);
+    oscillator.start(audio.currentTime);
+  };
+
+  function changeFrequency (e) {
+    var xPos = e.clientX;
+    var yPos = e.clientY;
+
+    oscillator.frequency.setTargetAtTime(calculateFrequency(xPos), audio.currentTime , 0.001);
+    gainNode.gain.setTargetAtTime(calculateGain(yPos), audio.currentTime, 0.001);
+  };
 };

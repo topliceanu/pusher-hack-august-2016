@@ -138,7 +138,7 @@ window.onload = function() {
   };
 
   function drawCircle (x, y) {
-    x = x / 640 * document.body.clientWidth;
+    x = (640 - x) / 640 * document.body.clientWidth;
     y = y / 480 * document.body.clientHeight;
 
     circle.style.background = '#f2ed63';

@@ -3,13 +3,16 @@
   "version": "1.0.0",
   "description": "html5 theremin",
   "main": "index.js",
+  "engines": {
+    "node": "4.4.7"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "./node_modules/.bin/http-server ./public -p 3000 -a 0.0.0.0 --cors --utc --ssl --cert ./ssl/cert.pem --key ./ssl/key.pem"
+    "dev": "./node_modules/.bin/http-server ./public -p 3000 -a 0.0.0.0 --cors --utc --ssl --cert ./ssl/cert.pem --key ./ssl/key.pem",
+    "start": "node index.js"
   },
   "author": "alexandru topliceanu",
   "license": "MIT",
-  "devDependencies": {
-    "http-server": "^0.9.0"
+  "dependencies": {
+    "http-server": "0.9.0"
   }
 }

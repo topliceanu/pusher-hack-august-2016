@@ -92,9 +92,10 @@ window.onload = function() {
 
   // Theremin part
 
-  var audio = new AudioContext(),
-      gainNode = audio.createGain(),
-      oscillator = null;
+  var audio = new AudioContext();
+  var gainNode = audio.createGain();
+  var circle = document.querySelector('#circle');
+  var oscillator = null;
 
   gainNode.connect(audio.destination);
 
@@ -155,9 +156,10 @@ window.onload = function() {
 
   function stopOscillator () {
     if (oscillator) {
-        oscillator.stop(audio.currentTime);
-        oscillator.disconnect();
-        oscillator = null;
+      circle.style.display = 'none';
+      oscillator.stop(audio.currentTime);
+      oscillator.disconnect();
+      oscillator = null;
     }
   };
 

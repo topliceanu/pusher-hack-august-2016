@@ -14,7 +14,7 @@ window.onload = function() {
     }
     compatibility.requestAnimationFrame(play);
   }, function (error) {
-    alert("WebRTC not available");
+    alert("WebRTC not available "+error.message);
   });
 
   function highlight(context, coord) {

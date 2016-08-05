@@ -3,7 +3,6 @@ window.onload = function() {
   var context = canvas.getContext('2d');
   var video = document.createElement('video');
   var detector;
-  var audio = new AudioContext();
   var smoother = new Smoother([0.9995, 0.9995, 0.9995, 0.9995], [0, 0, 0, 0], 0.1);
 
   compatibility.getUserMedia({video: true}, function(stream) {
@@ -92,13 +91,25 @@ window.onload = function() {
 
   // Theremin part
 
+
   var audio = new AudioContext();
   var gainNode = audio.createGain();
   var circle = document.querySelector('#circle');
   var oscillator = null;
+  // the effects part.
+  var distortion = audio.createWaveShaper();
+  var biquadFilter = audio.createBiquadFilter();
 
-  gainNode.connect(audio.destination);
+  gainNode.connect(distortion);
+  distortion.connect(biquadFilter);
+  biquadFilter.connect(audio.destination);
 
+  setInterval(function () {
+    var filters = ["distortion:400", "biquad:lowshelf", "biquad:highshelf", "biquad:bandpass"];
+    var filter = filters[Math.floor(Math.random() * filters.length)];
+    console.log("apply filter ", filter);
+    applyEffect(distortion, biquadFilter, filter);
+  }, 2000);
 
   function calculateFrequency (mouseXPosition) {
       var minFrequency = 20,
@@ -126,7 +137,7 @@ window.onload = function() {
       return gain;
   };
 
-  var drawCircle = function (x, y) {
+  function drawCircle (x, y) {
     x = x / 640 * document.body.clientWidth;
     y = y / 480 * document.body.clientHeight;
 
@@ -182,3 +193,40 @@ else {
   canvas.style.display = "none";
 }
 
+function applyEffect(distortion, biquadFilter, effect) {
+  distortion.oversample = '4x';
+  biquadFilter.gain.value = 0;
+
+  switch (effect) {
+    case "distortion:400":
+      distortion.curve = makeDistortionCurve(400);
+      break;
+    case "biquad:lowshelf":
+      biquadFilter.type = "lowshelf";
+      biquadFilter.frequency.value = 1000;
+      break;
+    case "biquad:highshelf":
+      biquadFilter.type = "highshelf";
+      biquadFilter.frequency.value = 800;
+      break;
+    case "biquad:bandpass":
+      biquadFilter.type = "bandpass";
+      biquadFilter.frequency.value = 1000;
+      biquadFilter.Q = 200;
+      break;
+  }
+}
+
+function makeDistortionCurve(amount) {
+  var k = typeof amount === 'number' ? amount : 50,
+    n_samples = 44100,
+    curve = new Float32Array(n_samples),
+    deg = Math.PI / 180,
+    i = 0,
+    x;
+  for ( ; i < n_samples; ++i ) {
+    x = i * 2 / n_samples - 1;
+    curve[i] = ( 3 + k ) * x * 20 * deg / ( Math.PI + k * Math.abs(x) );
+  }
+  return curve;
+};

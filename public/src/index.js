@@ -6,13 +6,13 @@ window.onload = function() {
   var audio = new AudioContext();
   var smoother = new Smoother([0.9995, 0.9995, 0.9995, 0.9995], [0, 0, 0, 0], 0.1);
 
-  window.navigator.webkitGetUserMedia({video: true}, function(stream) {
+  compatibility.getUserMedia({video: true}, function(stream) {
     try {
-      video.src = window.URL.createObjectURL(stream);
+      video.src = compatibility.URL.createObjectURL(stream);
     } catch (error) {
       video.src = stream;
     }
-    window.requestAnimationFrame(play);
+    compatibility.requestAnimationFrame(play);
   }, function (error) {
     alert("WebRTC not available");
   });
@@ -47,7 +47,7 @@ window.onload = function() {
   };
 
   function play() {
-    window.requestAnimationFrame(play);
+    compatibility.requestAnimationFrame(play);
     if (video.paused) video.play();
 
     // Draw video overlay:
